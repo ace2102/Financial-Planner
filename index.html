@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Everett Financial Planner</title>
+<meta name="description" content="Personal retirement and financial projection planner">
+<meta name="theme-color" content="#4a7c6f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Financial Planner">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ef;
+    --white: #ffffff;
+    --surface: #faf9f7;
+    --border: #e8e3db;
+    --border2: #d9d2c7;
+    --text: #2d2926;
+    --text-mid: #6b6259;
+    --text-light: #9e9389;
+    --accent: #4a7c6f;
+    --accent-light: #e8f2ef;
+    --accent2: #c07a3a;
+    --accent2-light: #fdf0e3;
+    --accent3: #5b6fa8;
+    --accent3-light: #edf0f9;
+    --phase1: #4a7c6f;
+    --phase1-bg: #e8f2ef;
+    --phase2: #c07a3a;
+    --phase2-bg: #fdf0e3;
+    --phase3: #5b6fa8;
+    --phase3-bg: #edf0f9;
+    --green: #3a8a5e;
+    --green-bg: #e6f5ee;
+    --red: #b85050;
+    --red-bg: #faeaea;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-badge {
+    width: 40px; height: 40px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  header .subtitle {
+    color: var(--text-light);
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  /* MAIN LAYOUT */
+  .page { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* PHASE TABS */
+  .phase-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .phase-tab {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .phase-tab.p1 { background: var(--phase1-bg); color: var(--phase1); }
+  .phase-tab.p2 { background: var(--phase2-bg); color: var(--phase2); }
+  .phase-tab.p3 { background: var(--phase3-bg); color: var(--phase3); }
+  .phase-tab.all { background: #ede9e3; color: var(--text-mid); }
+  .phase-tab.active.p1 { border-color: var(--phase1); }
+  .phase-tab.active.p2 { border-color: var(--phase2); }
+  .phase-tab.active.p3 { border-color: var(--phase3); }
+  .phase-tab.active.all { border-color: var(--text-mid); }
+
+  /* CONTROLS PANEL */
+  .controls-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 32px;
+  }
+  @media (max-width: 600px) { .controls-grid { grid-template-columns: 1fr; } }
+
+  .section-heading {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-heading .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-heading.p1 { color: var(--phase1); }
+  .section-heading.p1 .dot { background: var(--phase1); }
+  .section-heading.p2 { color: var(--phase2); }
+  .section-heading.p2 .dot { background: var(--phase2); }
+  .section-heading.p3 { color: var(--phase3); }
+  .section-heading.p3 .dot { background: var(--phase3); }
+  .section-heading.re { color: var(--text-mid); }
+  .section-heading.re .dot { background: var(--text-mid); }
+  .section-heading.inv { color: var(--accent3); }
+  .section-heading.inv .dot { background: var(--accent3); }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--text-mid);
+    font-weight: 600;
+  }
+  .field-value {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--accent);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 2px 8px rgba(74,124,111,0.3);
+  }
+  .field.p2 input[type=range]::-webkit-slider-thumb { border-color: var(--phase2); }
+  .field.p3 input[type=range]::-webkit-slider-thumb { border-color: var(--phase3); }
+  .field.inv input[type=range]::-webkit-slider-thumb { border-color: var(--accent3); }
+
+  /* TOGGLE */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .toggle-label { font-size: 13px; color: var(--text-mid); font-weight: 600; }
+  .toggle {
+    position: relative; width: 42px; height: 24px; flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: var(--border2);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  /* SUMMARY CARDS */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .summary-row { grid-template-columns: 1fr 1fr; } }
+
+  .summary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .summary-card .s-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+  .summary-card .s-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .summary-card .s-sub {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 3px;
+  }
+  .s-green { color: var(--green); }
+  .s-orange { color: var(--phase2); }
+  .s-blue { color: var(--phase3); }
+  .s-teal { color: var(--accent); }
+
+  /* PHASE SUMMARY CARDS */
+  .phase-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .phase-cards { grid-template-columns: 1fr; } }
+
+  .phase-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--border);
+  }
+  .phase-card.p1 { border-top-color: var(--phase1); }
+  .phase-card.p2 { border-top-color: var(--phase2); }
+  .phase-card.p3 { border-top-color: var(--phase3); }
+
+  .phase-card-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .phase-card.p1 .phase-card-title { color: var(--phase1); }
+  .phase-card.p2 .phase-card-title { color: var(--phase2); }
+  .phase-card.p3 .phase-card-title { color: var(--phase3); }
+
+  .phase-card-ages {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .phase-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-stat:last-child { border-bottom: none; }
+  .phase-stat .ps-label { color: var(--text-mid); }
+  .phase-stat .ps-value { font-weight: 700; color: var(--text); font-family: 'Nunito', sans-serif; }
+  .phase-stat .ps-value.big {
+    font-size: 15px;
+    color: var(--accent);
+  }
+  .phase-card.p2 .phase-stat .ps-value.big { color: var(--phase2); }
+  .phase-card.p3 .phase-stat .ps-value.big { color: var(--phase3); }
+
+  /* CHART SECTION */
+  .chart-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 20px 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .chart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chart-card-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-mid);
+    font-weight: 600;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  canvas { width: 100%; display: block; }
+
+  /* TABLE */
+  .table-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .table-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .table-card-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    background: var(--surface);
+    color: var(--text-mid);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 0 var(--border);
+  }
+  th:first-child { text-align: left; }
+  td {
+    padding: 8px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+  }
+  td:first-child { text-align: left; color: var(--text-mid); font-size: 11px; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  tr.phase-1 td:first-child { border-left: 3px solid var(--phase1); padding-left: 11px; }
+  tr.phase-2 td:first-child { border-left: 3px solid var(--phase2); padding-left: 11px; }
+  tr.phase-3 td:first-child { border-left: 3px solid var(--phase3); padding-left: 11px; }
+  tr:hover td { background: var(--surface); }
+  td.pos { color: var(--green); font-weight: 700; }
+  td.neg { color: var(--red); font-weight: 700; }
+  td.accent { color: var(--accent); font-weight: 800; font-family: 'Nunito', sans-serif; font-size: 13px; }
+  tr.milestone { background: #fdfcfa; }
+  tr.milestone td:first-child::after { content: ' ★'; color: var(--phase2); }
+
+  .controls-section { margin-bottom: 24px; }
+  .controls-section-inner { display: none; }
+  .controls-section-inner.active { display: block; }
+
+  .pill-section {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-mid);
+    cursor: pointer;
+    margin-bottom: 12px;
+    user-select: none;
+    transition: border-color 0.15s;
+  }
+  .pill-section:hover { border-color: var(--border2); }
+  .pill-section .arrow { font-size: 10px; transition: transform 0.2s; }
+  .pill-section.open .arrow { transform: rotate(90deg); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">📊</div>
+  <div>
+    <h1>Financial Future Planner</h1>
+    <div class="subtitle">Retirement projection · Ages 46 – 90</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ===== CONTROLS ===== -->
+  <div class="controls-panel">
+
+    <!-- Phase 1 -->
+    <div class="section-heading p1"><span class="dot"></span> Phase 1 · Accumulation (Ages 46–55)</div>
+    <div class="controls-grid">
+      <div>
+        <div class="field">
+          <div class="field-label">Starting Portfolio (Brokerage + 401k) <span class="field-value" id="v-portfolio"></span></div>
+          <input type="range" id="r-portfolio" min="500000" max="3500000" step="50000">
+        </div>
+        <div class="field">
+          <div class="field-label">Your Income (pretax) <span class="field-value" id="v-yourIncome1"></span></div>
+          <input type="range" id="r-yourIncome1" min="0" max="800000" step="10000">
+        </div>
+        <div class="field">
+          <div class="field-label">Wife's Income (pretax) <span class="field-value" id="v-wifeIncome1"></span></div>
+          <input type="range" id="r-wifeIncome1" min="0" max="240000" step="5000">
+        </div>
+      </div>
+      <div>
+        <div class="field">
+          <div class="field-label">Annual Savings <span class="field-value" id="v-save1"></span></div>
+          <input type="range" id="r-save1" min="0" max="240000" step="5000">
+        </div>
+        <div class="field">
+          <div class="field-label">Effective Tax Rate (Phase 1, base) <span class="field-value" id="v-taxRate1"></span></div>
+          <input type="range" id="r-taxRate1" min="0.05" max="0.37" step="0.01">
+        </div>
+        <div style="background:#fdf5eb;border:1px solid #e8d5a8;border-left:3px solid var(--phase2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:800;color:var(--phase2);margin-bottom:6px;">📐 Mortgage deduction fade</div>
+          <div style="font-size:11px;color:var(--text-mid);margin-bottom:10px;">As your mortgage pays down, the interest deduction shrinks, gradually raising your effective tax rate each year through age 63. The model auto-adjusts the rate based on your remaining balance and interest rate below.</div>
+          <div class="field" style="margin-bottom:10px;">
+            <div class="field-label" style="font-size:11px;">Current mortgage balance <span class="field-value" id="v-mortgageBalance"></span></div>
+            <input type="range" id="r-mortgageBalance" min="50000" max="1150000" step="50000">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <div class="field-label" style="font-size:11px;">Mortgage interest rate <span class="field-value" id="v-mortgageRate"></span></div>
+            <input type="range" id="r-mortgageRate" min="0.02" max="0.105" step="0.0025">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Monthly Mortgage <span class="field-value" id="v-mortgage"></span></div>
+          <input type="range" id="r-mortgage" min="0" max="14800" step="100">
+        </div>
+        <div class="field">
+          <div class="field-label">Monthly Expenses / Credit Cards <span class="field-value" id="v-cc"></span></div>
+          <input type="range" id="r-cc" min="0" max="28000" step="250">
+        </div>
+        <div class="field">
+          <div class="field-label">529 Plan Contributions (ends at 55) <span class="field-value" id="v-plans529Mo"></span></div>
+          <input type="range" id="r-plans529Mo" min="0" max="2800" step="100">
+        </div>
+        <div class="field">
+          <div class="field-label">529 Current Balance <span class="field-value" id="v-plans529Balance"></span></div>
+          <input type="range" id="r-plans529Balance" min="0" max="760000" step="10000">
+        </div>
+        <div class="field">
+          <div class="field-label">529 Investment Return <span class="field-value" id="v-plans529Return"></span></div>
+          <input type="range" id="r-plans529Return" min="0.02" max="0.12" step="0.005">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Phase 2 -->
+    <div class="section-heading p2"><span class="dot"></span> Phase 2 · Scale Back (Ages 55–63)</div>
+    <div class="controls-grid">
+      <div>
+        <div class="field p2">
+          <div class="field-label">Your Income (pretax) <span class="field-value" id="v-yourIncome2"></span></div>
+          <input type="range" id="r-yourIncome2" min="0" max="360000" step="10000">
+        </div>
+        <div class="field p2">
+          <div class="field-label">Wife's Income (pretax) <span class="field-value" id="v-wifeIncome2"></span></div>
+          <input type="range" id="r-wifeIncome2" min="0" max="360000" step="5000">
+        </div>
+      </div>
+      <div>
+        <div class="field p2">
+          <div class="field-label">Annual Savings (reduced) <span class="field-value" id="v-save2"></span></div>
+          <input type="range" id="r-save2" min="0" max="100000" step="5000">
+        </div>
+        <div class="field p2">
+          <div class="field-label">Effective Tax Rate (Phase 2) <span class="field-value" id="v-taxRate2"></span></div>
+          <input type="range" id="r-taxRate2" min="0.05" max="0.33" step="0.01">
+        </div>
+        <div class="field p2">
+          <div class="field-label">Expense Drop at Age 57 (kids launch) <span class="field-value" id="v-kidsdrop"></span></div>
+          <input type="range" id="r-kidsdrop" min="0" max="50000" step="1000">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Phase 3 -->
+    <div class="section-heading p3"><span class="dot"></span> Phase 3 · Retirement (Age 63+)</div>
+    <div class="controls-grid">
+      <div>
+        <div class="field p3">
+          <div class="field-label">Wife's Pension (monthly at 63) <span class="field-value" id="v-pension"></span></div>
+          <input type="range" id="r-pension" min="0" max="10000" step="250">
+        </div>
+        <div class="field p3">
+          <div class="field-label">Pension COLA (NYSLRS, max 3%) <span class="field-value" id="v-pensionCola"></span></div>
+          <input type="range" id="r-pensionCola" min="0" max="0.03" step="0.0025">
+        </div>
+        <div class="field p3">
+          <div class="field-label">Combined Social Security (monthly) <span class="field-value" id="v-ss"></span></div>
+          <input type="range" id="r-ss" min="0" max="20000" step="250">
+        </div>
+      </div>
+      <div>
+        <div class="field p3">
+          <div class="field-label">Monthly Expenses in Retirement <span class="field-value" id="v-retexp"></span></div>
+          <input type="range" id="r-retexp" min="3000" max="23000" step="250">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Real Estate -->
+    <div class="section-heading re"><span class="dot"></span> Real Estate Income</div>
+    <div class="controls-grid">
+      <div>
+        <div class="field">
+          <div class="field-label">Multifamily Annual Profit <span class="field-value" id="v-rental"></span></div>
+          <input type="range" id="r-rental" min="0" max="100000" step="1000">
+        </div>
+        <div class="field">
+          <div class="field-label">Rental Income Growth Rate <span class="field-value" id="v-rentalgrowth"></span></div>
+          <input type="range" id="r-rentalgrowth" min="0" max="0.04" step="0.005">
+        </div>
+      </div>
+      <div>
+        <div class="field">
+          <div class="field-label">Practice RE Monthly Profit (from age 55) <span class="field-value" id="v-practice"></span></div>
+          <input type="range" id="r-practice" min="0" max="6000" step="250">
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Sell Practice Real Estate</span>
+          <label class="toggle"><input type="checkbox" id="t-sellpractice"><span class="toggle-slider"></span></label>
+        </div>
+        <div id="f-sellage" class="field">
+          <div class="field-label">Age to Sell <span class="field-value" id="v-sellage"></span></div>
+          <input type="range" id="r-sellage" min="55" max="71" step="1">
+        </div>
+        <div id="f-sellprice" class="field">
+          <div class="field-label">Net Sale Proceeds <span class="field-value" id="v-sellprice"></span></div>
+          <input type="range" id="r-sellprice" min="0" max="800000" step="50000">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- One-Time Events -->
+    <div class="section-heading" style="color:#7a5c9e"><span class="dot" style="background:#7a5c9e"></span> One-Time Events</div>
+    <div class="controls-grid">
+      <div>
+        <div style="background:#f5f0fb;border:1px solid #d9cfee;border-radius:8px;padding:14px 16px;margin-bottom:0">
+          <div style="font-size:12px;font-weight:800;color:#7a5c9e;margin-bottom:10px;">🏥 Practice Business Sale</div>
+          <div class="field">
+            <div class="field-label">Age of Sale <span class="field-value" id="v-practiceSaleAge"></span></div>
+            <input type="range" id="r-practiceSaleAge" min="51" max="59" step="1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">Net Sale Proceeds <span class="field-value" id="v-practiceSaleAmount"></span></div>
+            <input type="range" id="r-practiceSaleAmount" min="0" max="800000" step="25000">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="background:#fdf5eb;border:1px solid #ead9b8;border-radius:8px;padding:14px 16px;margin-bottom:0">
+          <div style="font-size:12px;font-weight:800;color:#b07a30;margin-bottom:10px;">🎁 Inheritance</div>
+          <div class="field">
+            <div class="field-label">Age Received <span class="field-value" id="v-inheritanceAge"></span></div>
+            <input type="range" id="r-inheritanceAge" min="46" max="74" step="1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">Net Proceeds <span class="field-value" id="v-inheritanceAmount"></span></div>
+            <input type="range" id="r-inheritanceAmount" min="0" max="1500000" step="25000">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Investment Assumptions -->
+    <div class="section-heading inv"><span class="dot"></span> Investment Assumptions &amp; Tax Rates</div>
+    <div class="controls-grid">
+      <div>
+        <div class="field inv">
+          <div class="field-label">Annual Investment Return <span class="field-value" id="v-return"></span></div>
+          <input type="range" id="r-return" min="0.02" max="0.12" step="0.005">
+        </div>
+        <div class="field inv">
+          <div class="field-label">Effective Tax Rate (Retirement) <span class="field-value" id="v-taxRate3"></span></div>
+          <input type="range" id="r-taxRate3" min="0.05" max="0.35" step="0.01">
+        </div>
+        <div class="field inv">
+          <div class="field-label">Withdrawal Start Age (flat rate before 55, needs-based after) <span class="field-value" id="v-withdrawalStartAge"></span></div>
+          <input type="range" id="r-withdrawalStartAge" min="46" max="75" step="1">
+        </div>
+        <div class="field inv">
+          <div class="field-label">Max Withdrawal Rate (ceiling) <span class="field-value" id="v-withdrawalRate"></span></div>
+          <input type="range" id="r-withdrawalRate" min="0.005" max="0.035" step="0.0025">
+        </div>
+      </div>
+      <div>
+        <div class="field inv">
+          <div class="field-label">Annual Expense Inflation <span class="field-value" id="v-inflation"></span></div>
+          <input type="range" id="r-inflation" min="0.0" max="0.04" step="0.005">
+        </div>
+        <div class="field inv">
+          <div class="field-label">Projection End Age <span class="field-value" id="v-endage"></span></div>
+          <input type="range" id="r-endage" min="65" max="95" step="1">
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end controls-panel -->
+
+  <!-- ===== SCENARIO TOGGLE ===== -->
+  <div style="margin-bottom:20px;">
+    <button id="btn-scenario-practice" onclick="toggleScenario()" style="
+      display:inline-flex;align-items:center;gap:10px;
+      padding:12px 20px;border-radius:var(--radius);cursor:pointer;
+      font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
+      border:2px solid var(--border2);
+      background:var(--white);color:var(--text-mid);
+      transition:all 0.2s;
+    ">
+      <span style="font-size:18px;">🏥</span>
+      <span id="scenario-label">Scenario: Practice Purchase</span>
+      <span id="scenario-badge" style="
+        font-size:11px;padding:3px 10px;border-radius:20px;
+        background:#ede9e3;color:var(--text-mid);
+      ">OFF</span>
+    </button>
+    <div id="scenario-desc" style="display:none;margin-top:8px;padding:10px 14px;background:#e8f5ef;border:1px solid #b8ddc8;border-left:3px solid var(--phase1);border-radius:var(--radius-sm);font-size:12px;color:#2a5a3f;max-width:520px;">
+      <strong>Active:</strong> +$100K/yr additional savings through age 55, then $350K net sale proceeds at age 55. Check the year-by-year table for the [Scenario] event row.
+    </div>
+  </div>
+
+  <!-- ===== ACTUAL CASH FLOW CHECK ===== -->
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 24px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;">💵 Actual Cash Flow Check</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:2px;">Reconciles from real take-home pay — use this to validate the model each year</div>
+      </div>
+      <div id="cfcheck-badge" style="font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;padding:5px 14px;border-radius:20px;background:#ede9e3;color:var(--text-mid);">Checking...</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+
+      <!-- INFLOWS -->
+      <div>
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:10px;">Monthly Inflows</div>
+        <div class="field" style="margin-bottom:12px;">
+          <div class="field-label" style="font-size:12px;">Combined net W-2 take-home / period <span class="field-value" id="v-netPerPeriod"></span></div>
+          <input type="range" id="r-netPerPeriod" min="8000" max="14000" step="250">
+          <div style="font-size:10px;color:var(--text-light);margin-top:3px;">× 26 pay periods ÷ 12 = <strong id="cfcheck-w2mo">—</strong>/mo</div>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <div class="field-label" style="font-size:12px;">Rental cash profit (annual) <span class="field-value" id="v-rentalCash"></span></div>
+          <input type="range" id="r-rentalCash" min="0" max="150000" step="1000">
+          <div style="font-size:10px;color:var(--text-light);margin-top:3px;">÷ 12 = <strong id="cfcheck-rentalmo">—</strong>/mo</div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <div class="field-label" style="font-size:12px;">Other monthly cash (distributions, etc.) <span class="field-value" id="v-otherCash"></span></div>
+          <input type="range" id="r-otherCash" min="0" max="20000" step="250">
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:var(--green-bg);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;font-weight:700;color:var(--green);">Total monthly inflows</span>
+          <span style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--green);" id="cfcheck-inflow">—</span>
+        </div>
+      </div>
+
+      <!-- OUTFLOWS -->
+      <div>
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:10px;">Monthly Outflows</div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--text-mid);">Mortgage</span>
+          <span id="cfcheck-mortgage">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--text-mid);">Credit card / expenses</span>
+          <span id="cfcheck-cc">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--text-mid);">529 contributions</span>
+          <span id="cfcheck-529">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--text-mid);">Brokerage deposits (after-tax savings)</span>
+          <span id="cfcheck-brokerage">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:12px;">
+          <span style="color:var(--text-mid);">401k contributions (pre-tax, memo only)</span>
+          <span style="color:var(--text-light);" id="cfcheck-401k">—</span>
+        </div>
+        <div style="margin-top:10px;padding:10px 14px;background:var(--red-bg);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;font-weight:700;color:var(--red);">Total monthly outflows</span>
+          <span style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--red);" id="cfcheck-outflow">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BALANCE LINE -->
+    <div id="cfcheck-result" style="margin-top:16px;padding:14px 18px;border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;" id="cfcheck-label">Monthly surplus / (deficit)</div>
+        <div style="font-size:11px;color:var(--text-mid);margin-top:2px;" id="cfcheck-note">—</div>
+      </div>
+      <div style="font-family:'Nunito',sans-serif;font-size:24px;font-weight:800;" id="cfcheck-net">—</div>
+    </div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="s-label">529 Balance at 50</div>
+      <div class="s-value s-blue" id="sum-529">—</div>
+      <div class="s-sub">Start of college drawdowns</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Net Worth at 63</div>
+      <div class="s-value s-teal" id="sum-63">—</div>
+      <div class="s-sub">Portfolio + RE equity · retirement</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Net Worth at 75</div>
+      <div class="s-value s-blue" id="sum-75">—</div>
+      <div class="s-sub">Portfolio + RE equity · mid-retirement</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Net Worth at 80</div>
+      <div class="s-value s-orange" id="sum-90">—</div>
+      <div class="s-sub">Portfolio + RE equity · planning horizon</div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE SUMMARY CARDS ===== -->
+  <div class="phase-cards">
+    <div class="phase-card p1">
+      <div class="phase-card-title">Accumulation</div>
+      <div class="phase-card-ages">Ages 46–55 · 9 years</div>
+      <div class="phase-stat"><span class="ps-label">Combined Income (pretax)</span><span class="ps-value" id="ps1-income">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Annual Savings</span><span class="ps-value" id="ps1-save">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Monthly Expenses (incl. mortgage)</span><span class="ps-value" id="ps1-exp">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Rental Income</span><span class="ps-value" id="ps1-re">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Portfolio at 55</span><span class="ps-value big" id="ps1-end">—</span></div>
+    </div>
+    <div class="phase-card p2">
+      <div class="phase-card-title">Scale Back</div>
+      <div class="phase-card-ages">Ages 55–63 · 8 years</div>
+      <div class="phase-stat"><span class="ps-label">Combined Income (pretax)</span><span class="ps-value" id="ps2-income">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Annual Savings</span><span class="ps-value" id="ps2-save">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Monthly Expenses (incl. mortgage)</span><span class="ps-value" id="ps2-exp">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Practice RE Income</span><span class="ps-value" id="ps2-re">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Kids Expense Drop (age 57)</span><span class="ps-value" id="ps2-kids">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Portfolio at 63</span><span class="ps-value big" id="ps2-end">—</span></div>
+    </div>
+    <div class="phase-card p3">
+      <div class="phase-card-title">Retirement</div>
+      <div class="phase-card-ages">Ages 63–<span id="ps3-endage">90</span></div>
+      <div class="phase-stat"><span class="ps-label">Monthly Income</span><span class="ps-value" id="ps3-income">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Monthly Expenses <span style="font-size:10px;color:var(--green);font-weight:700">(mortgage-free ✓)</span></span><span class="ps-value" id="ps3-exp">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Monthly Cash Flow</span><span class="ps-value" id="ps3-cf">—</span></div>
+      <div class="phase-stat"><span class="ps-label">vs. Phase 2 Expenses</span><span class="ps-value" id="ps3-exp-delta">—</span></div>
+      <div class="phase-stat"><span class="ps-label">Portfolio at <span id="ps3-endage2">90</span></span><span class="ps-value big" id="ps3-end">—</span></div>
+    </div>
+  </div>
+
+  <!-- ===== CHARTS ===== -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div class="chart-card-title">Portfolio Value Over Time</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--phase1)"></div>Portfolio</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--phase2)"></div>Phase 2</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--phase3)"></div>Retirement</div>
+      </div>
+    </div>
+    <canvas id="chart" height="200"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div class="chart-card-title">Annual Income vs. Expenses</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>After-Tax Income</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Expenses</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div><span id="legend-withdrawal-income">2% Withdrawal (age 72+)</span></div>
+      </div>
+    </div>
+    <canvas id="chart2" height="180"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div class="chart-card-title">Annual Cash Flow</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--phase3)"></div>Cash Flow</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div><span id="legend-withdrawal-cf">2% Withdrawal (age 72+)</span></div>
+      </div>
+    </div>
+    <canvas id="chart3" height="140"></canvas>
+  </div>
+
+  <!-- ===== 529 COLLEGE FUNDING ANALYSIS ===== -->
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-card-header">
+      <div>
+        <div class="chart-card-title">529 College Funding Analysis</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:3px;">Dimitri (b.2012), Alexa (b.2013), Matthew (b.2015) · 7% return · $1,400/mo contributions until age 55</div>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-light);margin-bottom:4px;">Peak balance (age 50)</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;" id="c529-peak">—</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-light);margin-bottom:4px;">Total need ($60K/child)</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;color:var(--accent);" id="c529-need60">$720K</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-light);margin-bottom:4px;">Gap at $60K</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;" id="c529-gap60">—</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-light);margin-bottom:4px;">Gap at $90K</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;" id="c529-gap90">—</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px;font-size:11px;color:var(--text-mid);font-weight:600;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#4a7c6f;"></span>Balance — $60K/child</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:2px;background:#4a7c6f;display:inline-block;border-top:2px dashed #4a7c6f;"></span>Balance — $90K/child</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(184,80,80,0.4);"></span>Deficit — $60K</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#b85050;"></span>Deficit — $90K</span>
+    </div>
+
+    <canvas id="chart529comp" height="220"></canvas>
+
+    <!-- Insight callout -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <div style="background:#e8f2ef;border:1px solid #b8ddc8;border-left:3px solid var(--phase1);padding:12px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+        <div style="font-size:11px;font-weight:800;color:var(--phase1);margin-bottom:5px;">✓ $60K/child — fully funded</div>
+        <div style="font-size:11px;color:#2a5a3f;line-height:1.5;">Your 529 covers nearly the entire cost at this level. The $1,400/mo you're still contributing over the next 4 years builds additional cushion. In-state public, strong aid packages, or merit scholarships that bring net cost to ~$60K mean no out-of-pocket college spending.</div>
+      </div>
+      <div style="background:#faeaea;border:1px solid #e8c0c0;border-left:3px solid var(--red);padding:12px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+        <div style="font-size:11px;font-weight:800;color:var(--red);margin-bottom:5px;">⚠ $90K/child — ~$380K gap</div>
+        <div style="font-size:11px;color:#6a2a2a;line-height:1.5;">At private school rates, the account depletes mid-age 54 when all three kids still have years left. The $380K gap falls during Phase 2 (ages 54–57) when combined income is $360K — manageable as cash flow but worth knowing. Consider it a known Phase 2 expense rather than a planning crisis.</div>
+      </div>
+    </div>
+
+    <!-- Detail table -->
+    <div style="margin-top:16px;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr>
+            <th style="background:var(--surface);padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-mid);">Age</th>
+            <th style="background:var(--surface);padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-mid);">Kids</th>
+            <th style="background:var(--surface);padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--phase1);">Bal. $60K</th>
+            <th style="background:var(--surface);padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--red);">Deficit $60K</th>
+            <th style="background:var(--surface);padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--phase1);">Bal. $90K</th>
+            <th style="background:var(--surface);padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--red);">Deficit $90K</th>
+          </tr>
+        </thead>
+        <tbody id="tbody529comp"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TABLE ===== -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">Year-by-Year Projection</div>
+      <div style="font-size:11px;color:var(--text-light);">★ = milestone age</div>
+    </div>
+    <div style="overflow-x:auto;overflow-y:auto;max-height:520px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Total Income</th>
+            <th>Your Income</th>
+            <th>Wife's Income</th>
+            <th>RE / Passive</th>
+            <th>Pension + SS</th>
+            <th>Tax Rate</th>
+            <th>After-Tax Income</th>
+            <th>Investment Withdrawal (AT)</th>
+            <th>Expenses</th>
+            <th>Savings Added</th>
+            <th>One-Time Events</th>
+            <th>After-Tax CF</th>
+            <th>529 Balance</th>
+            <th>Portfolio</th>
+            <th>RE Equity</th>
+            <th>Total Net Worth</th>
+          </tr>
+        </thead>
+        <tbody id="proj-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== INHERITED IRA BALANCE TRACKER ===== -->
+  <div class="table-card" style="margin-top:20px;">
+    <div class="table-card-header">
+      <div class="table-card-title">Inherited IRA Sub-Account Tracker</div>
+      <div style="font-size:11px;color:var(--text-light);">Balances are a subset of the main portfolio · 7861 stretch IRA · 5333 10-yr IRA · 0697 10-yr Roth (tax-free)</div>
+    </div>
+    <div style="overflow-x:auto;overflow-y:auto;max-height:420px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th style="color:#4a7c6f;">7861 Balance</th>
+            <th style="color:#4a7c6f;">7861 RMD</th>
+            <th style="color:#b85050;">5333 Balance</th>
+            <th style="color:#b85050;">5333 RMD</th>
+            <th style="color:#3266ad;">0697 Balance</th>
+            <th style="color:#3266ad;">0697 Dist.</th>
+            <th>Taxable Dist.</th>
+            <th>Tax Cost (~21%)</th>
+            <th>After-Tax Cash</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-inherited"></tbody>
+      </table>
+    </div>
+  </div><!-- end inherited table -->
+
+  <!-- ===== 401k / IRA TRACKER ===== -->
+  <div class="table-card" style="margin-top:20px;">
+    <div class="table-card-header">
+      <div class="table-card-title">401k / IRA RMD Tracker</div>
+      <div style="font-size:11px;color:var(--text-light);">Andrew SIMPLE IRA ($113K) + Practice 401k ($277K, rolls at 55) · Sotiria SUNY 403b ($276K) + Rollover IRA ($471K) · RMDs forced at age 73 · All ordinary income</div>
+    </div>
+    <div style="overflow-x:auto;overflow-y:auto;max-height:420px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th style="color:#3266ad;">Andrew IRA</th>
+            <th style="color:#1D9E75;">Sotiria 403b</th>
+            <th>ULT Factor</th>
+            <th style="color:#D85A30;">Andrew RMD</th>
+            <th style="color:#D85A30;">Sotiria RMD</th>
+            <th>Total RMD</th>
+            <th>Tax Cost (~20%)</th>
+            <th>After-Tax Cash</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-401k"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end page -->
+
+<script>
+const defaults = {
+  portfolio: 2000000,
+  yourIncome1: 400000,
+  wifeIncome1: 120000,
+  yourIncome2: 180000,
+  wifeIncome2: 180000,
+  save1: 120000,
+  mortgage: 7400,
+  cc: 14000,
+  plans529Mo: 1400,
+  plans529Balance: 380000,
+  plans529Return: 0.07,
+  save2: 50000,
+  kidsdrop: 25000,
+  pension: 5000,
+  pensionCola: 0.02,
+  ss: 10000,
+  retexp: 13000,
+  rental: 50000,
+  rentalgrowth: 0.02,
+  practice: 3000,
+  sellpractice: false,
+  sellage: 63,
+  sellprice: 400000,
+  practiceSaleAge: 55,
+  practiceSaleAmount: 400000,
+  inheritanceAge: 60,
+  inheritanceAmount: 750000,
+  return: 0.07,
+  inflation: 0.02,
+  taxRate1: 0.21,
+  taxRate2: 0.19,
+  taxRate3: 0.20,
+  mortgageBalance: 600000,
+  mortgageRate: 0.0625,
+  withdrawalStartAge: 50,
+  withdrawalRate: 0.02,
+  endage: 80,
+  scenarioPracticePurchase: false,
+  netPerPeriod: 10000,
+  rentalCash: 50000,
+  otherCash: 0
+};
+const state = { ...defaults };
+
+const sliders = [
+  { id: 'portfolio', fmt: 'dollar' },
+  { id: 'yourIncome1', fmt: 'dollar' },
+  { id: 'wifeIncome1', fmt: 'dollar' },
+  { id: 'yourIncome2', fmt: 'dollar' },
+  { id: 'wifeIncome2', fmt: 'dollar' },
+  { id: 'save1', fmt: 'dollar' },
+  { id: 'mortgage', fmt: 'dollar_mo' },
+  { id: 'cc', fmt: 'dollar_mo' },
+  { id: 'plans529Mo', fmt: 'dollar_mo' },
+  { id: 'plans529Balance', fmt: 'dollar' },
+  { id: 'plans529Return', fmt: 'pct' },
+  { id: 'save2', fmt: 'dollar' },
+  { id: 'kidsdrop', fmt: 'dollar' },
+  { id: 'pension', fmt: 'dollar_mo' },
+  { id: 'pensionCola', fmt: 'pct' },
+  { id: 'ss', fmt: 'dollar_mo' },
+  { id: 'retexp', fmt: 'dollar_mo' },
+  { id: 'rental', fmt: 'dollar' },
+  { id: 'rentalgrowth', fmt: 'pct' },
+  { id: 'practice', fmt: 'dollar_mo' },
+  { id: 'sellage', fmt: 'age' },
+  { id: 'sellprice', fmt: 'dollar' },
+  { id: 'practiceSaleAge', fmt: 'age' },
+  { id: 'practiceSaleAmount', fmt: 'dollar' },
+  { id: 'inheritanceAge', fmt: 'age' },
+  { id: 'inheritanceAmount', fmt: 'dollar' },
+  { id: 'return', fmt: 'pct' },
+  { id: 'inflation', fmt: 'pct' },
+  { id: 'mortgageBalance', fmt: 'dollar' },
+  { id: 'mortgageRate', fmt: 'pct' },
+  { id: 'taxRate1', fmt: 'pct' },
+  { id: 'taxRate2', fmt: 'pct' },
+  { id: 'taxRate3', fmt: 'pct' },
+  { id: 'withdrawalStartAge', fmt: 'age' },
+  { id: 'withdrawalRate', fmt: 'pct' },
+  { id: 'netPerPeriod', fmt: 'dollar_exact' },
+  { id: 'rentalCash', fmt: 'dollar' },
+  { id: 'otherCash', fmt: 'dollar_mo' },
+  { id: 'endage', fmt: 'age' },
+];
+
+function fmt(val, type) {
+  if (type === 'dollar') {
+    if (val >= 1000000) return '$' + (val/1000000).toFixed(2) + 'M';
+    return '$' + (val/1000).toFixed(0) + 'K';
+  }
+  if (type === 'dollar_exact') return '$' + val.toLocaleString();
+  if (type === 'dollar_mo') return '$' + val.toLocaleString() + '/mo';
+  if (type === 'pct') return (val * 100).toFixed(1) + '%';
+  if (type === 'age') return 'Age ' + val;
+  return val;
+}
+function fmtD(v) {
+  const abs = Math.abs(v);
+  const sign = v < 0 ? '-' : '';
+  if (abs >= 1000000) return sign + '$' + (abs/1000000).toFixed(2) + 'M';
+  if (abs >= 1000) return sign + '$' + (abs/1000).toFixed(0) + 'K';
+  return sign + '$' + abs.toFixed(0);
+}
+
+function initControls() {
+  sliders.forEach(({ id, fmt: f }) => {
+    const slider = document.getElementById('r-' + id);
+    const label = document.getElementById('v-' + id);
+    if (!slider || !label) return;
+    slider.value = state[id];
+    label.textContent = fmt(state[id], f);
+    slider.addEventListener('input', () => {
+      state[id] = parseFloat(slider.value);
+      label.textContent = fmt(state[id], f);
+      safeUpdate();
+    });
+  });
+  const toggleSell = document.getElementById('t-sellpractice');
+  toggleSell.checked = state.sellpractice;
+  updateSellVisibility();
+  toggleSell.addEventListener('change', () => {
+    state.sellpractice = toggleSell.checked;
+    updateSellVisibility();
+    safeUpdate();
+  });
+}
+
+function updateSellVisibility() {
+  const op = state.sellpractice ? 1 : 0.35;
+  const pe = state.sellpractice ? '' : 'none';
+  document.getElementById('f-sellage').style.opacity = op;
+  document.getElementById('f-sellprice').style.opacity = op;
+  document.getElementById('f-sellage').style.pointerEvents = pe;
+  document.getElementById('f-sellprice').style.pointerEvents = pe;
+}
+
+function project() {
+  const rows = [];
+  const startAge = 46;
+  const endAge = Math.max(state.endage, 80);
+  let portfolio = state.portfolio;
+  let balance529 = state.plans529Balance; // track 529 separately
+
+  // Inherited IRA balances — already included in state.portfolio starting value
+  // We track them separately to model RMDs correctly and show in table
+  // Withdrawals flow into cash flow (taxable for IRAs, tax-free for Roth)
+  // They are already inside the portfolio number, so RMDs just shift
+  // money from "locked in inherited IRA" to "available cash / reinvested"
+  // Net portfolio effect: RMD amount stays in portfolio (reinvested after tax)
+  // but we need to show the taxable income event and the declining sub-balance
+
+  // IRS Single Life Expectancy Table (ages 46-90)
+  const lifeExpTable = {
+    46:38.8,47:37.9,48:37.0,49:36.1,50:35.1,51:34.2,52:33.3,
+    53:32.3,54:31.4,55:30.5,56:29.6,57:28.7,58:27.8,59:26.8,
+    60:25.9,61:25.0,62:24.1,63:23.1,64:22.2,65:21.3,66:20.4,
+    67:19.5,68:18.6,69:17.7,70:16.8,71:15.9,72:15.0,73:14.1,
+    74:13.3,75:12.4,76:11.6,77:10.8,78:10.0,79:9.3,80:8.6
+  };
+
+  // Account 7861: Stretch IRA (pre-SECURE), factor starts at 38.8 age 46, decrements by 1/yr
+  let bal7861 = 144382;
+  let stretchFactor = 38.8;
+
+  // Account 5333: Inherited IRA 10-yr rule (parent took RMDs → annual RMDs required 2026-2034, deplete 2035)
+  let bal5333 = 28641;
+
+  // Account 0697: Inherited Roth 10-yr rule (no annual RMDs → let grow, take all 2035 tax-free)
+  let bal0697 = 35425;
+
+  // ── Own 401k / IRA balances (already inside state.portfolio) ──────────
+  // Tracked separately to compute forced RMDs at age 73
+  // Contributions flow in through age 55 (Andrew) and 63 (Sotiria)
+  const ultTable = {
+    72:27.4,73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,
+    79:21.1,80:20.2,81:19.4,82:18.5,83:17.7,84:16.8,85:16.0
+  };
+  let andrewIRA = 113000;     // Andrew SIMPLE IRA — no new contributions
+  let andrew401k = 277000;    // Practice 401k — rolls into IRA at age 55
+  let sotiriaRetire = 276000 + 471000; // Sotiria SUNY 403b ($276K) + Rollover IRA 9947 ($471K)
+
+  for (let age = startAge; age <= endAge; age++) {
+    const year = age - startAge;
+    const phase = age < 55 ? 1 : age < 63 ? 2 : 3;
+
+    // 529 plan: grows at plans529Return, contributions until 55
+    // College drawdown based on actual kids' birth years:
+    // Dimitri born 2012 → college 2030-2034 (Andrew ages 50-54)
+    // Alexa born 2013 → college 2031-2035 (Andrew ages 51-55)
+    // Matthew born 2015 → college 2033-2037 (Andrew ages 53-57)
+    // Overlap: ages 50-57, peak overlap (2 kids) ages 51-54, (3 kids briefly) age 53-54
+    const kidsInCollege = {
+      50: 1, 51: 2, 52: 2, 53: 3, 54: 3, 55: 2, 56: 1, 57: 1
+    };
+    const kidsCount = kidsInCollege[age] || 0;
+    const costPerKidPerYear = 90000;
+    const is529ContribYear = age < 55;
+    const is529DrawYear = kidsCount > 0;
+    const yearlyCollegeDraw = is529DrawYear ? Math.min(balance529, kidsCount * costPerKidPerYear) : 0;
+    balance529 = balance529 * (1 + state.plans529Return)
+      + (is529ContribYear ? state.plans529Mo * 12 : 0)
+      - yearlyCollegeDraw;
+    if (balance529 < 0) balance529 = 0;
+
+    const rentalIncome = state.rental * Math.pow(1 + state.rentalgrowth, year);
+    let practiceIncome = 0;
+    if (age >= 55 && (!state.sellpractice || age < state.sellage)) {
+      practiceIncome = state.practice * 12;
+    }
+    // Flag the year practice RE income stops
+    const practiceREEnds = state.sellpractice && age === state.sellage && state.practice > 0;
+    let practiceSale = (state.sellpractice && age === state.sellage) ? state.sellprice : 0;
+
+    // One-time events
+    const practiceBizSale = (age === state.practiceSaleAge) ? state.practiceSaleAmount : 0;
+    const inheritance = (age === state.inheritanceAge) ? state.inheritanceAmount : 0;
+    const oneTimeInflows = practiceBizSale + inheritance;
+
+    // Earned income (pretax, display only — does not affect savings rate)
+    const yourEarned = phase === 1 ? state.yourIncome1 : phase === 2 ? state.yourIncome2 : 0;
+    // Wife's income grows linearly from wifeIncome1 → wifeIncome2 across Phase 1 (ages 46–54), holds at wifeIncome2 in Phase 2
+    let wifeEarned;
+    if (phase === 1) {
+      const phase1Years = 9; // ages 46–54
+      const t = (age - 46) / phase1Years; // 0 at 46, 1 at 55
+      wifeEarned = state.wifeIncome1 + (state.wifeIncome2 - state.wifeIncome1) * t;
+    } else if (phase === 2) {
+      wifeEarned = state.wifeIncome2;
+    } else {
+      wifeEarned = 0;
+    }
+    const combinedEarned = yourEarned + wifeEarned;
+
+    // Tax rate — adjusted for mortgage interest deduction fade as principal pays down
+    // Estimate annual interest for this year: balance × rate × (1 - amortization progress)
+    // Mortgage runs from age 46 to 63 (17 years). Interest starts high and decays.
+    let taxRate;
+    if (phase === 3) {
+      taxRate = state.taxRate3;
+    } else {
+      // Approximate remaining mortgage interest this year using amortizing balance
+      const mortYears = 17; // age 46–63
+      const mortYearElapsed = Math.min(year, mortYears);
+      const r = state.mortgageRate / 12;
+      const n = mortYears * 12;
+      const elapsed = mortYearElapsed * 12;
+      // Remaining balance fraction on an amortizing loan
+      const balanceFraction = r > 0
+        ? (Math.pow(1 + r, n) - Math.pow(1 + r, elapsed)) / (Math.pow(1 + r, n) - 1)
+        : Math.max(0, 1 - mortYearElapsed / mortYears);
+      const remainingBalance = state.mortgageBalance * balanceFraction;
+      const annualInterest = remainingBalance * state.mortgageRate;
+      // Today's interest (age 46) — baseline deduction
+      const baseInterest = state.mortgageBalance * state.mortgageRate;
+      // Lost deduction vs today (capped at base)
+      const lostDeduction = Math.max(0, baseInterest - annualInterest);
+      // Tax drag from lost deduction: lost deduction × marginal rate (35% federal bracket)
+      const marginalRate = 0.35;
+      const baseTaxRate = phase === 1 ? state.taxRate1 : state.taxRate2;
+      const taxDrag = (lostDeduction * marginalRate) / Math.max((phase === 1 ? state.yourIncome1 + state.wifeIncome1 : state.yourIncome2 + state.wifeIncome2), 1);
+      taxRate = Math.min(baseTaxRate + taxDrag, 0.55);
+    }
+    const afterTaxFactor = 1 - taxRate;
+
+    // ── Inherited IRA withdrawals (taxRate now defined) ────────────────
+    // 7861: stretch IRA — annual RMD = balance / life expectancy factor
+    const rmd7861 = bal7861 > 0 ? bal7861 / stretchFactor : 0;
+    const rmd7861AfterTax = rmd7861 * (1 - taxRate);
+    bal7861 = Math.max(0, (bal7861 - rmd7861) * (1 + state.return));
+    stretchFactor = Math.max(1, stretchFactor - 1);
+
+    // 5333: 10-yr rule with annual RMDs (years 1-9 = ages 46-54, deplete at 55)
+    let rmd5333 = 0;
+    if (age >= 46 && age <= 54 && bal5333 > 0) {
+      const factor5333 = lifeExpTable[age] || 30;
+      rmd5333 = bal5333 / factor5333;
+    } else if (age === 55 && bal5333 > 0) {
+      rmd5333 = bal5333; // full depletion year 10
+    }
+    const rmd5333AfterTax = rmd5333 * (1 - taxRate);
+    bal5333 = age < 55 ? Math.max(0, (bal5333 - rmd5333) * (1 + state.return)) : 0;
+
+    // 0697: inherited Roth — no RMDs, let grow, take all at age 55 tax-free
+    let rmd0697 = 0;
+    if (age === 55 && bal0697 > 0) {
+      rmd0697 = bal0697;
+    }
+    const rmd0697AfterTax = rmd0697; // tax-free
+    bal0697 = age < 55 ? bal0697 * (1 + state.return) : 0;
+
+    // Total inherited distributions this year
+    const inheritedTaxable = rmd7861 + rmd5333;
+    const inheritedTaxFree = rmd0697;
+    const inheritedAfterTax = rmd7861AfterTax + rmd5333AfterTax + rmd0697AfterTax;
+    const inheritedTaxCost = inheritedTaxable * taxRate;
+
+    // ── Own 401k / IRA RMDs ───────────────────────────────────────────
+    // Contributions: Andrew 401k ($38K/yr) through 55, then 401k rolls into IRA
+    //               Sotiria 403b ($23K/yr) through 63
+    // RMD start: age 73 (SECURE 2.0, born 1980)
+    const andrew401kContrib = age < 55 ? 38000 : 0;
+    const sotiriaContrib = age < 63 ? 23000 : 0;
+
+    // At 55: roll practice 401k into IRA
+    if (age === 55 && andrew401k > 0) {
+      andrewIRA += andrew401k;
+      andrew401k = 0;
+    }
+
+    let rmdAndrew = 0;
+    let rmdSotiria = 0;
+    if (age >= 73) {
+      const ultFactor = ultTable[age] || 12.0;
+      rmdAndrew = andrewIRA > 0 ? andrewIRA / ultFactor : 0;
+      rmdSotiria = sotiriaRetire > 0 ? sotiriaRetire / ultFactor : 0;
+    }
+
+    const totalOwnRMD = rmdAndrew + rmdSotiria;
+    const totalOwnRMDAfterTax = totalOwnRMD * (1 - taxRate);
+    const ownRMDTaxCost = totalOwnRMD * taxRate;
+
+    // Update balances (growth + contributions - RMDs)
+    andrew401k = Math.max(0, (andrew401k + andrew401kContrib) * (1 + state.return));
+    andrewIRA = Math.max(0, (andrewIRA) * (1 + state.return) - rmdAndrew);
+    sotiriaRetire = Math.max(0, (sotiriaRetire + sotiriaContrib) * (1 + state.return) - rmdSotiria);
+
+    const inflFactor = Math.pow(1 + state.inflation, year);
+    let monthlyExp;
+    const kidsDropMo = age >= 57 ? state.kidsdrop / 12 : 0;
+    const plans529Drop = age >= 55 ? state.plans529Mo : 0;
+    if (phase === 3) {
+      // Retirement: retexp in today's dollars, inflated to 63, then +inflation to 67,
+      // then declines 1%/yr after 67 (spending smile)
+      const inflTo63 = Math.pow(1 + state.inflation, 63 - 46); // inflate retexp to retirement
+      const yearsPost63 = age - 63;
+      let retAdj;
+      if (age <= 67) {
+        retAdj = inflTo63 * Math.pow(1 + state.inflation, yearsPost63);
+      } else {
+        const inflTo67 = inflTo63 * Math.pow(1 + state.inflation, 4);
+        retAdj = inflTo67 * Math.pow(1 - 0.01, age - 67); // decline 1%/yr after 67
+      }
+      monthlyExp = Math.max(0, (state.retexp - kidsDropMo) * retAdj);
+    } else {
+      // Phases 1 & 2: mortgage is FIXED nominal (no inflation), lifestyle inflates to 67 then declines
+      const lifestyleFactor = age <= 67
+        ? Math.pow(1 + state.inflation, year)
+        : Math.pow(1 + state.inflation, 67 - 46) * Math.pow(1 - 0.01, age - 67);
+      const mortgageNominal = state.mortgage; // fixed payment, no inflation
+      const lifestyle = (state.cc - kidsDropMo - plans529Drop) * lifestyleFactor;
+      monthlyExp = Math.max(0, mortgageNominal + lifestyle);
+    }
+    const annualExp = monthlyExp * 12;
+
+    // ── Portfolio Withdrawal — needs-based after age 55 ─────────────────
+    // Before withdrawalStartAge: flat % withdrawal (for college funding buffer)
+    // After age 55: withdraw only what's needed to cover expense shortfall
+    // This keeps the portfolio compounding and maximizes estate value
+    let portfolioWithdrawal = 0;
+    let portfolioWithdrawalAfterTax = 0;
+
+    if (age >= state.withdrawalStartAge) {
+      if (age < 55) {
+        // Flat rate withdrawal for early college buffer years
+        portfolioWithdrawal = portfolio * state.withdrawalRate;
+        portfolioWithdrawalAfterTax = portfolioWithdrawal * (1 - taxRate);
+      } else {
+        // Needs-based: compute all non-portfolio income first
+        const pensionYearsTemp = phase === 3 ? age - 63 : 0;
+        const pensionMonthlyTemp = state.pension * Math.pow(1 + state.pensionCola, pensionYearsTemp);
+        const nonPortfolioIncome =
+          rentalIncome +
+          practiceIncome +
+          combinedEarned +
+          (phase === 3 ? (pensionMonthlyTemp + state.ss) * 12 : 0) +
+          inheritedAfterTax;
+        const nonPortfolioAfterTax = nonPortfolioIncome * afterTaxFactor + inheritedAfterTax * (1 - afterTaxFactor);
+        // How much after-tax cash do we still need to cover expenses?
+        const cashAvailable = (phase !== 3
+          ? state.netPerPeriod * 26 + state.rentalCash + state.otherCash * 12
+          : nonPortfolioIncome * afterTaxFactor);
+        const shortfall = Math.max(0, annualExp - cashAvailable);
+        // Gross up shortfall for taxes to get pre-tax withdrawal needed
+        const grossWithdrawal = shortfall / (1 - taxRate);
+        // Cap at the flat rate as a maximum ceiling — don't withdraw more than the rate allows
+        const maxWithdrawal = portfolio * state.withdrawalRate;
+        portfolioWithdrawal = Math.min(grossWithdrawal, maxWithdrawal);
+        portfolioWithdrawalAfterTax = portfolioWithdrawal * (1 - taxRate);
+      }
+    }
+
+    let annualIncome = rentalIncome + practiceIncome + practiceSale + combinedEarned + oneTimeInflows + portfolioWithdrawal;
+    // Pension grows with COLA from age 63 onward
+    const pensionYears = phase === 3 ? age - 63 : 0;
+    const pensionMonthly = state.pension * Math.pow(1 + state.pensionCola, pensionYears);
+
+    if (phase === 3) annualIncome += (pensionMonthly + state.ss) * 12 + totalOwnRMD;
+
+    let savingsContrib = phase === 1 ? state.save1 : phase === 2 ? state.save2 : 0;
+
+    // Scenario: practice purchase — adds $100K/yr savings during Phase 1, then $350K net sale at age 55
+    const scenarioSavings = (state.scenarioPracticePurchase && phase === 1) ? 100000 : 0;
+    const scenarioSaleProceeds = (state.scenarioPracticePurchase && age === 55) ? 350000 : 0;
+    savingsContrib += scenarioSavings;
+
+    // After-tax income: apply tax rate to earned/recurring income; one-time windfalls taxed separately
+    const recurringIncome = rentalIncome + practiceIncome + combinedEarned + (phase === 3 ? (pensionMonthly + state.ss) * 12 : 0);
+    const recurringAfterTax = recurringIncome * afterTaxFactor;
+    // Windfall amounts (practice biz sale, RE sale, inheritance, scenario sale) are all post-tax — pass through at full value
+    const windfall = practiceSale + oneTimeInflows + scenarioSaleProceeds;
+    const windfallAfterTax = windfall; // already after-tax per user input
+    const annualIncomeAfterTax = recurringAfterTax + windfallAfterTax + portfolioWithdrawalAfterTax;
+
+    let portfolioDraw = 0;
+    if (phase === 3) {
+      const monthlyPassiveAfterTax = ((pensionMonthly + state.ss) + (practiceIncome / 12) + (rentalIncome / 12)) * afterTaxFactor;
+      const monthlyWithdrawalAfterTax = portfolioWithdrawalAfterTax / 12;
+      const shortfall = monthlyExp - monthlyPassiveAfterTax - monthlyWithdrawalAfterTax;
+      if (shortfall > 0) portfolioDraw = shortfall * 12;
+    }
+
+    portfolio = Math.max(0, portfolio * (1 + state.return) + savingsContrib + windfall - portfolioDraw - portfolioWithdrawal - inheritedTaxCost - ownRMDTaxCost);
+
+    const netCF = annualIncome + savingsContrib - annualExp;
+
+    // After-Tax CF uses ACTUAL cash received rather than gross × (1-tax):
+    // - Phases 1 & 2: earned income = actual net take-home (netPerPeriod × 26/yr)
+    //   scaled proportionally if Phase 2 income is lower than Phase 1
+    // - Phase 3: pension + SS + passive income × after-tax factor (no W-2 take-home)
+    // - All phases: rental cash profit (state.rentalCash) replaces modeled rental income
+    // - Passive/RE income and portfolio withdrawals use after-tax factor as before
+    let earnedCashActual;
+    if (phase === 1) {
+      earnedCashActual = state.netPerPeriod * 26 + state.otherCash * 12;
+    } else if (phase === 2) {
+      // Scale take-home proportionally for reduced Phase 2 income
+      const p2IncomeRatio = (state.yourIncome2 + state.wifeIncome2) / Math.max(state.yourIncome1 + state.wifeIncome1, 1);
+      earnedCashActual = state.netPerPeriod * 26 * p2IncomeRatio + state.otherCash * 12;
+    } else {
+      earnedCashActual = (pensionMonthly + state.ss) * 12 * afterTaxFactor;
+    }
+    const rentalCashAnnual = phase !== 3 ? state.rentalCash : rentalIncome * afterTaxFactor;
+    const practiceRECashActual = practiceIncome * afterTaxFactor;
+    const afterTaxCF = earnedCashActual + rentalCashAnnual
+      + windfallAfterTax + portfolioWithdrawalAfterTax
+      + inheritedAfterTax + totalOwnRMDAfterTax - annualExp;
+    // Real estate equity — projected forward at 3.5%/yr, mortgage amortizes to 0 at 63
+    const reYear = year;
+    const primaryValue = 1250000 * Math.pow(1.035, reYear);
+    const rentalREValue = 900000 * Math.pow(1.035, reYear);
+    // Mortgage balance: $600K at 6.25% over 17 years, paid off at 63
+    const mortR = 0.0625 / 12;
+    const mortN = 17 * 12;
+    const mortElapsed = Math.min(reYear * 12, mortN);
+    const primaryMortgage = age < 63
+      ? 600000 * (Math.pow(1+mortR,mortN) - Math.pow(1+mortR,mortElapsed)) / (Math.pow(1+mortR,mortN) - 1)
+      : 0;
+    const primaryEquity = primaryValue - primaryMortgage;
+    const rentalEquity = rentalREValue; // no mortgage on rental
+    const totalREEquity = primaryEquity + rentalEquity;
+    const totalNetWorth = portfolio + totalREEquity;
+
+    rows.push({ age, phase, taxRate, annualIncome, afterTaxIncome: annualIncomeAfterTax, afterTaxCF, combinedEarned, yourEarned, wifeEarned, annualExp, savingsContrib, rentalIncome, practiceIncome, practiceSale, practiceBizSale, practiceREEnds, inheritance, oneTimeInflows, scenarioSavings, scenarioSaleProceeds, pensionMonthly, portfolioWithdrawal, portfolioWithdrawalAfterTax, portfolioDraw, netCF, portfolioValue: portfolio, balance529, yearlyCollegeDraw, rmd7861, rmd5333, rmd0697, inheritedTaxable, inheritedTaxFree, inheritedAfterTax, bal7861, bal5333, bal0697, primaryValue, primaryEquity, rentalEquity, totalREEquity, totalNetWorth, rmdAndrew, rmdSotiria, totalOwnRMD, andrewIRA, sotiriaRetire });
+  }
+  return rows;
+}
+
+function update() {
+  const rows = project();
+  const displayRows = rows.filter(r => r.age <= state.endage);
+  const at50 = rows.find(r => r.age === 50);
+  const at55 = rows.find(r => r.age === 55);
+  document.getElementById('sum-529').textContent = at50 ? fmtD(at50.balance529) : '—';
+  const at63 = rows.find(r => r.age === 63);
+  const at75 = rows.find(r => r.age === 75);
+  const atEnd = displayRows[displayRows.length - 1];
+  const at80 = rows.find(r => r.age === 80) || atEnd;
+  const at90 = at80; // alias — projection ends at 80
+
+  // Phase cards
+  document.getElementById('ps1-save').textContent = fmtD(state.save1) + '/yr';
+  document.getElementById('ps1-income').textContent =
+    fmtD(state.yourIncome1 + state.wifeIncome1) + ' → ' + fmtD(state.yourIncome1 + state.wifeIncome2) +
+    '/yr pretax (wife grows ' + fmtD(state.wifeIncome1) + ' → ' + fmtD(state.wifeIncome2) + ')';
+  document.getElementById('ps1-exp').textContent = fmtD(state.mortgage + state.cc) + '/mo (incl. ' + fmtD(state.plans529Mo) + '/mo 529 → ends at 55)';
+  document.getElementById('ps1-re').textContent = fmtD(state.rental) + '/yr';
+  document.getElementById('ps1-end').textContent = at55 ? fmtD(at55.portfolioValue) : '—';
+
+  // Phase 2 expenses: 529 gone, mortgage + cc minus kids drop at 57
+  const p2ExpMo = state.mortgage + state.cc - state.plans529Mo;
+  const p2ExpMoPost57 = Math.max(0, state.mortgage + state.cc - state.plans529Mo - state.kidsdrop / 12);
+  document.getElementById('ps2-save').textContent = fmtD(state.save2) + '/yr';
+  document.getElementById('ps2-income').textContent = fmtD(state.yourIncome2 + state.wifeIncome2) + '/yr pretax · ' + fmtD((state.yourIncome2 + state.wifeIncome2) * (1 - state.taxRate2)) + '/yr after tax';
+  document.getElementById('ps2-exp').textContent = fmtD(p2ExpMo) + '/mo → ' + fmtD(p2ExpMoPost57) + '/mo at 57';
+  document.getElementById('ps2-re').textContent = fmtD(state.practice * 12) + '/yr';
+  document.getElementById('ps2-kids').textContent = '−' + fmtD(state.kidsdrop) + '/yr at 57';
+  document.getElementById('ps2-end').textContent = at63 ? fmtD(at63.portfolioValue) : '—';
+
+  // Phase 3: retirement expenses vs what was paid in phase 2 post-57
+  const p3ExpMo = state.retexp;
+  const expDelta = p3ExpMo - p2ExpMoPost57;
+  const deltaEl = document.getElementById('ps3-exp-delta');
+  deltaEl.textContent = (expDelta <= 0 ? '↓ ' : '↑ ') + fmtD(Math.abs(expDelta)) + '/mo vs Phase 2';
+  deltaEl.style.color = expDelta <= 0 ? 'var(--green)' : 'var(--red)';
+
+  const ea = state.endage;
+  document.getElementById('ps3-endage').textContent = ea;
+  document.getElementById('ps3-endage2').textContent = ea;
+
+  // Practice RE income at age 63: only included if not sold before then
+  const practiceActiveAt63 = !state.sellpractice || state.sellage > 63;
+  const retPracticeIncome = practiceActiveAt63 ? state.practice : 0;
+  const retMonIncomePretax = (state.pension + state.ss) + retPracticeIncome + (state.rental / 12);
+  const retMonIncomeAfterTax = retMonIncomePretax * (1 - state.taxRate3);
+  const retMonCF = retMonIncomeAfterTax - state.retexp;
+  document.getElementById('ps3-income').textContent =
+    fmtD(retMonIncomePretax) + '/mo pretax · ' + fmtD(retMonIncomeAfterTax) + '/mo after tax'
+    + (!practiceActiveAt63 ? ' (practice RE sold)' : '')
+    + (state.pensionCola > 0 ? ` · pension +${(state.pensionCola*100).toFixed(1)}% COLA/yr` : '');
+  document.getElementById('ps3-exp').textContent = fmtD(state.retexp) + '/mo today\'s $ · ' + fmtD(state.retexp * Math.pow(1 + state.inflation, 17)) + '/mo at 63';
+  const cfEl = document.getElementById('ps3-cf');
+  cfEl.textContent = fmtD(retMonCF) + '/mo (after tax)';
+  cfEl.style.color = retMonCF >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('ps3-end').textContent = atEnd ? fmtD(atEnd.portfolioValue) : '—';
+
+  document.getElementById('sum-63').textContent = at63 ? fmtD(at63.totalNetWorth) : '—';
+  document.getElementById('sum-75').textContent = at75 ? fmtD(at75.totalNetWorth) : '—';
+  document.getElementById('sum-90').textContent = at90 ? fmtD(at90.totalNetWorth) : '—';
+  const sumCF = document.getElementById('sum-cf');
+  if (sumCF) {
+    sumCF.textContent = fmtD(retMonCF) + '/mo';
+    sumCF.style.color = retMonCF >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  // Table — only display rows up to selected end age
+  const tbody = document.getElementById('proj-tbody');
+  tbody.innerHTML = '';
+  const milestones = new Set([55, 57, 60, 63, 70, 75, 80, 85, 90, 95, 100, state.practiceSaleAge, state.inheritanceAge, state.sellage]);
+  displayRows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.className = 'phase-' + r.phase;
+    if (milestones.has(r.age)) tr.classList.add('milestone');
+    const reIncome = r.rentalIncome + r.practiceIncome;
+    const pensionSS = r.phase === 3 ? (r.pensionMonthly + state.ss) * 12 : 0;
+    const totalIncome = r.combinedEarned + reIncome + pensionSS + (r.practiceSale || 0) + (r.oneTimeInflows || 0);
+    const eventParts = [
+      r.practiceBizSale > 0 ? `★ Practice Biz Sale +${fmtD(r.practiceBizSale)}` : '',
+      r.age === 55 && state.plans529Mo > 0 ? `★ 529 Ends −${fmtD(state.plans529Mo)}/mo` : '',
+      r.practiceREEnds ? `★ Practice RE Income Ends (was ${fmtD(state.practice)}/mo)` : '',
+      r.inheritance > 0 ? `★ Inheritance +${fmtD(r.inheritance)}` : '',
+      r.scenarioSaleProceeds > 0 ? `★ [Scenario] Practice Sale +${fmtD(r.scenarioSaleProceeds)}` : '',
+      r.yearlyCollegeDraw > 0 ? `🎓 College draw −${fmtD(r.yearlyCollegeDraw)}` : '',
+      r.totalOwnRMD > 0 ? `🏦 401k/IRA RMD: ${fmtD(r.totalOwnRMD)} taxable` : '',
+      (r.rmd7861 > 0 || r.rmd5333 > 0 || r.rmd0697 > 0) ? `📋 Inh. IRA: ${fmtD(r.rmd7861+r.rmd5333)} taxable${r.rmd0697>0?' +'+fmtD(r.rmd0697)+' tax-free':''}` : ''
+    ].filter(Boolean);
+    const eventLabel = eventParts.join('<br>');
+    tr.innerHTML = `
+      <td>${r.age}</td>
+      <td style="font-weight:700">${fmtD(totalIncome)}</td>
+      <td>${r.yourEarned > 0 ? fmtD(r.yourEarned) : '—'}</td>
+      <td>${r.wifeEarned > 0 ? fmtD(r.wifeEarned) : '—'}</td>
+      <td style="color:var(--accent)">${reIncome > 0 ? fmtD(reIncome) : '—'}</td>
+      <td style="color:var(--phase3)">${pensionSS > 0 ? fmtD(pensionSS) : '—'}</td>
+      <td style="color:var(--text-mid)">${(r.taxRate * 100).toFixed(1)}%</td>
+      <td style="color:var(--accent3);font-weight:700">${fmtD(r.afterTaxIncome - (r.portfolioWithdrawalAfterTax || 0))}</td>
+      <td style="color:var(--accent2);font-weight:700">${r.portfolioWithdrawalAfterTax > 0 ? fmtD(r.portfolioWithdrawalAfterTax) : '—'}</td>
+      <td class="neg">${fmtD(r.annualExp)}</td>
+      <td>${r.savingsContrib > 0 ? fmtD(r.savingsContrib) : '—'}</td>
+      <td style="color:var(--phase2);font-weight:700">${eventLabel || '—'}</td>
+      <td class="${r.afterTaxCF >= 0 ? 'pos' : 'neg'}">${fmtD(r.afterTaxCF)}</td>
+      <td style="color:var(--accent3);font-weight:${r.balance529 > 0 ? '700' : '400'}">${r.balance529 > 0 ? fmtD(r.balance529) : '—'}</td>
+      <td class="accent">${fmtD(r.portfolioValue)}</td>
+      <td style="color:var(--phase2);">${fmtD(r.totalREEquity)}</td>
+      <td style="font-weight:700;color:var(--accent3);">${fmtD(r.totalNetWorth)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Update withdrawal legends dynamically
+  const withdrawalLabel = `${(state.withdrawalRate * 100).toFixed(2).replace(/\.?0+$/, '')}% Withdrawal (age ${state.withdrawalStartAge}+)`;
+  document.getElementById('legend-withdrawal-income').textContent = withdrawalLabel;
+  document.getElementById('legend-withdrawal-cf').textContent = withdrawalLabel;
+
+  drawCharts(displayRows);
+  updateCashFlowCheck();
+
+  // Inherited IRA tracker table — uses displayRows which is in scope here
+  const tbodyInh = document.getElementById('tbody-inherited');
+  if (tbodyInh) {
+    tbodyInh.innerHTML = '';
+    displayRows.forEach(r => {
+      if (!r.rmd7861 && !r.rmd5333 && !r.rmd0697 && (!r.bal7861 || r.bal7861 < 1) && r.age > 65) return;
+      const tr = document.createElement('tr');
+      if (r.age === 55) tr.style.background = 'rgba(184,80,80,0.06)';
+      const taxCost = (r.rmd7861 + r.rmd5333) * r.taxRate;
+      const afterTaxCash = r.rmd7861 * (1-r.taxRate) + r.rmd5333 * (1-r.taxRate) + r.rmd0697;
+      tr.innerHTML = `
+        <td style="padding:6px 10px;">${r.age}${r.age===55?' ⚠':''}</td>
+        <td style="padding:6px 10px;text-align:right;color:#4a7c6f;font-weight:600;">${fmtD(r.bal7861)}</td>
+        <td style="padding:6px 10px;text-align:right;">${r.rmd7861>0?fmtD(r.rmd7861):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;color:#b85050;font-weight:600;">${r.bal5333>0?fmtD(r.bal5333):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;${r.rmd5333>10000?'color:#b85050;font-weight:700;':''}">${r.rmd5333>0?fmtD(r.rmd5333):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;color:#3266ad;font-weight:600;">${r.bal0697>0?fmtD(r.bal0697):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;${r.rmd0697>0?'color:#3266ad;font-weight:700;':''}">${r.rmd0697>0?fmtD(r.rmd0697)+' ★':'—'}</td>
+        <td style="padding:6px 10px;text-align:right;">${r.inheritedTaxable>0?fmtD(r.inheritedTaxable):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;color:#b85050;">${taxCost>0?'−'+fmtD(taxCost):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;font-weight:600;color:#4a7c6f;">${afterTaxCash>0?fmtD(afterTaxCash):'—'}</td>
+      `;
+      tbodyInh.appendChild(tr);
+    });
+  }
+
+  draw529CompChart();
+
+  // 401k / IRA RMD tracker table
+  const tbody401k = document.getElementById('tbody-401k');
+  if (tbody401k) {
+    tbody401k.innerHTML = '';
+    displayRows.forEach(r => {
+      // Show milestone ages + all RMD years
+      const showAges = [46,50,55,60,63,65,70,73,75,78,80];
+      if (!showAges.includes(r.age) && r.totalOwnRMD === 0) return;
+      const tr = document.createElement('tr');
+      if (r.age === 55) tr.style.background = 'rgba(50,102,173,0.05)';
+      if (r.age === 73) tr.style.background = 'rgba(216,90,48,0.06)';
+      const ultFactor = {72:27.4,73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,79:21.1,80:20.2};
+      const factor = ultFactor[r.age] || '—';
+      const taxCost = r.totalOwnRMD * r.taxRate;
+      const afterTax = r.totalOwnRMD * (1 - r.taxRate);
+      const flag = r.age === 55 ? ' ↩ 401k rollover' : r.age === 73 ? ' ← RMDs begin' : '';
+      tr.innerHTML = `
+        <td style="padding:6px 10px;">${r.age}${flag ? `<span style="font-size:10px;color:var(--text-light);"> ${flag}</span>` : ''}</td>
+        <td style="padding:6px 10px;text-align:right;color:#3266ad;font-weight:600;">${fmtD(r.andrewIRA)}</td>
+        <td style="padding:6px 10px;text-align:right;color:#1D9E75;font-weight:600;">${fmtD(r.sotiriaRetire)}</td>
+        <td style="padding:6px 10px;text-align:right;color:var(--text-light);">${factor}</td>
+        <td style="padding:6px 10px;text-align:right;${r.rmdAndrew>0?'color:#D85A30;':'color:var(--text-light);'}">${r.rmdAndrew>0?fmtD(r.rmdAndrew):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;${r.rmdSotiria>0?'color:#D85A30;':'color:var(--text-light);'}">${r.rmdSotiria>0?fmtD(r.rmdSotiria):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;font-weight:${r.totalOwnRMD>0?'700':'400'};">${r.totalOwnRMD>0?fmtD(r.totalOwnRMD):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;color:#D85A30;">${taxCost>0?'−'+fmtD(taxCost):'—'}</td>
+        <td style="padding:6px 10px;text-align:right;font-weight:600;color:#3266ad;">${afterTax>0?fmtD(afterTax):'—'}</td>
+      `;
+      tbody401k.appendChild(tr);
+    });
+  }
+}
+
+function safeUpdate() {
+  try {
+    update();
+  } catch(e) {
+    console.error('update() error:', e);
+    // Show error visibly on page for debugging
+    let errDiv = document.getElementById('debug-error');
+    if (!errDiv) {
+      errDiv = document.createElement('div');
+      errDiv.id = 'debug-error';
+      errDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#b85050;color:#fff;padding:12px 16px;font-size:12px;font-family:monospace;z-index:9999;white-space:pre-wrap;max-height:200px;overflow-y:auto;';
+      document.body.prepend(errDiv);
+    }
+    errDiv.textContent = 'ERROR: ' + e.message + '\n' + (e.stack || '').split('\n').slice(0,5).join('\n');
+  }
+}
+
+function draw529CompChart() {
+  const kidsMap = {50:1,51:2,52:2,53:3,54:3,55:2,56:1,57:1};
+  const kidsNames = {50:'Dimitri',51:'Dimitri + Alexa',52:'Dimitri + Alexa',53:'All three',54:'All three',55:'Alexa + Matthew',56:'Matthew',57:'Matthew'};
+
+  function sim(costPerKid) {
+    let bal = state.plans529Balance;
+    const rows = [];
+    for (let age = 46; age <= 61; age++) {
+      const contrib = age < 55 ? state.plans529Mo * 12 : 0;
+      const growth = bal * state.plans529Return;
+      const kids = kidsMap[age] || 0;
+      const need = kids * costPerKid;
+      const available = bal + growth + contrib;
+      const draw = Math.min(available, need);
+      const deficit = Math.max(0, need - available);
+      bal = Math.max(0, available - draw);
+      rows.push({ age, kids, need, draw, deficit, bal });
+    }
+    return rows;
+  }
+
+  const r60 = sim(60000);
+  const r90 = sim(90000);
+
+  // Update summary cards
+  const peak = r60.find(r => r.age === 50);
+  document.getElementById('c529-peak').textContent = peak ? fmtD(peak.bal + peak.draw) : '—';
+  const gap60 = r60.reduce((s,r) => s + r.deficit, 0);
+  const gap90 = r90.reduce((s,r) => s + r.deficit, 0);
+  const g60El = document.getElementById('c529-gap60');
+  const g90El = document.getElementById('c529-gap90');
+  g60El.textContent = gap60 > 0 ? fmtD(gap60) : 'None ✓';
+  g60El.style.color = gap60 > 0 ? 'var(--red)' : 'var(--green)';
+  g90El.textContent = gap90 > 0 ? fmtD(gap90) : 'None ✓';
+  g90El.style.color = gap90 > 0 ? 'var(--red)' : 'var(--green)';
+
+  // Chart
+  const { canvas, ctx, w, h, dpr } = getCanvasSize('chart529comp', 220);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const chartRows = r60.filter(r => r.age >= 49 && r.age <= 58);
+  const ages = chartRows.map(r => r.age);
+  const bal60 = ages.map(a => r60.find(r=>r.age===a).bal);
+  const bal90 = ages.map(a => r90.find(r=>r.age===a).bal);
+  const def60 = ages.map(a => r60.find(r=>r.age===a).deficit);
+  const def90 = ages.map(a => r90.find(r=>r.age===a).deficit);
+
+  const pad = { top: 16, right: 16, bottom: 32, left: 72 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+  const maxV = Math.max(...bal60, ...bal90, ...def60, ...def90, 1);
+  const xS = i => pad.left + (ages.length > 1 ? i/(ages.length-1) : 0.5) * cw;
+  const yS = v => pad.top + (1 - v/maxV) * ch;
+
+  // Grid
+  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i/4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left+cw, y); ctx.stroke();
+    ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans',sans-serif`; ctx.textAlign = 'right';
+    ctx.fillText(fmtD(maxV*(1-i/4)), pad.left-6, y+4);
+  }
+
+  // Deficit bars (behind lines)
+  const barW = cw / ages.length * 0.35;
+  ages.forEach((a, i) => {
+    const x = xS(i);
+    if (def60[i] > 0) {
+      ctx.fillStyle = 'rgba(184,80,80,0.35)';
+      const bh = (def60[i]/maxV) * ch;
+      ctx.fillRect(x - barW - 2, pad.top + ch - bh, barW, bh);
+    }
+    if (def90[i] > 0) {
+      ctx.fillStyle = 'rgba(184,80,80,0.85)';
+      const bh = (def90[i]/maxV) * ch;
+      ctx.fillRect(x + 2, pad.top + ch - bh, barW, bh);
+    }
+  });
+
+  // Balance $60K (solid green)
+  ctx.beginPath();
+  ages.forEach((a,i) => i===0 ? ctx.moveTo(xS(i),yS(bal60[i])) : ctx.lineTo(xS(i),yS(bal60[i])));
+  ctx.strokeStyle = '#4a7c6f'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.setLineDash([]); ctx.stroke();
+
+  // Balance $90K (dashed green)
+  ctx.beginPath();
+  ages.forEach((a,i) => i===0 ? ctx.moveTo(xS(i),yS(bal90[i])) : ctx.lineTo(xS(i),yS(bal90[i])));
+  ctx.strokeStyle = '#4a7c6f'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.setLineDash([5,3]); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // X labels
+  ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans',sans-serif`; ctx.textAlign = 'center';
+  ages.forEach((a,i) => ctx.fillText(a, xS(i), h-6));
+
+  // Table
+  const tbody = document.getElementById('tbody529comp');
+  tbody.innerHTML = '';
+  r60.filter(r => r.age >= 50 && r.age <= 58).forEach(r => {
+    const r9 = r90.find(x=>x.age===r.age);
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid rgba(232,227,219,0.5)';
+    if (r.age === 53 || r.age === 54) tr.style.background = 'rgba(74,124,111,0.04)';
+    tr.innerHTML = `
+      <td style="padding:6px 10px;color:var(--text-mid);">${r.age}</td>
+      <td style="padding:6px 10px;text-align:center;color:var(--text-mid);font-size:10px;">${kidsNames[r.age]||'—'}</td>
+      <td style="padding:6px 10px;text-align:right;color:var(--phase1);font-weight:700;">${fmtD(r.bal)}</td>
+      <td style="padding:6px 10px;text-align:right;color:${r.deficit>0?'var(--red)':'var(--text-light)'};">${r.deficit>0?fmtD(r.deficit):'—'}</td>
+      <td style="padding:6px 10px;text-align:right;color:${r9.bal>0?'var(--phase1)':'var(--text-light)'};font-weight:${r9.bal>0?'700':'400'};">${fmtD(r9.bal)}</td>
+      <td style="padding:6px 10px;text-align:right;color:${r9.deficit>0?'var(--red)':'var(--text-light)'};">${r9.deficit>0?fmtD(r9.deficit):'—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function drawCharts(rows) {
+  drawPortfolioChart(rows);
+  drawIncomeChart(rows);
+  drawCashFlowChart(rows);
+}
+
+function getCanvasSize(id, defaultH) {
+  const canvas = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement ? Math.max(canvas.parentElement.clientWidth - 40, 200) : 600;
+  const h = defaultH;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  return { canvas, ctx: canvas.getContext('2d'), w, h, dpr };
+}
+
+function drawPortfolioChart(rows) {
+  const { canvas, ctx, w, h, dpr } = getCanvasSize('chart', 220);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { top: 16, right: 16, bottom: 32, left: 72 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const vals = rows.map(r => r.portfolioValue);
+  const nwVals = rows.map(r => r.totalNetWorth);
+  const maxV = Math.max(...nwVals, 1);
+
+  const xS = i => pad.left + (rows.length > 1 ? i / (rows.length - 1) : 0.5) * cw;
+  const yS = v => pad.top + (1 - v / maxV) * ch;
+
+  // Phase bands
+  const bands = [
+    { start: 46, end: 55, color: 'rgba(74,124,111,0.06)' },
+    { start: 55, end: 63, color: 'rgba(192,122,58,0.06)' },
+    { start: 63, end: state.endage + 1, color: 'rgba(91,111,168,0.07)' }
+  ];
+  bands.forEach(b => {
+    const si = rows.findIndex(r => r.age >= b.start);
+    const ei = rows.findIndex(r => r.age >= b.end);
+    if (si < 0) return;
+    const x1 = xS(si);
+    const x2 = xS(ei < 0 ? rows.length - 1 : Math.max(ei - 1, si));
+    ctx.fillStyle = b.color;
+    ctx.fillRect(x1, pad.top, x2 - x1, ch);
+  });
+
+  // Grid
+  ctx.strokeStyle = '#e8e3db';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+    ctx.fillStyle = '#9e9389';
+    ctx.font = `11px 'Nunito Sans', sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtD(maxV * (1 - i / 4)), pad.left - 6, y + 4);
+  }
+
+  // Portfolio fill
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(r.portfolioValue)) : ctx.lineTo(xS(i), yS(r.portfolioValue)); });
+  ctx.lineTo(xS(rows.length - 1), pad.top + ch);
+  ctx.lineTo(xS(0), pad.top + ch);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+  grad.addColorStop(0, 'rgba(74,124,111,0.25)');
+  grad.addColorStop(1, 'rgba(74,124,111,0.02)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Portfolio line
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(r.portfolioValue)) : ctx.lineTo(xS(i), yS(r.portfolioValue)); });
+  ctx.strokeStyle = 'var(--phase1)';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.setLineDash([]);
+  ctx.stroke();
+
+  // Total net worth line (dashed, includes RE equity)
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(r.totalNetWorth)) : ctx.lineTo(xS(i), yS(r.totalNetWorth)); });
+  ctx.strokeStyle = '#9b59b6';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.setLineDash([5, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Legend
+  ctx.font = `10px 'Nunito Sans', sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'var(--phase1)';
+  ctx.fillRect(pad.left + 4, pad.top + 4, 16, 3);
+  ctx.fillStyle = '#9e9389';
+  ctx.fillText('Portfolio', pad.left + 24, pad.top + 9);
+  ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 2; ctx.setLineDash([5,3]);
+  ctx.beginPath(); ctx.moveTo(pad.left + 110, pad.top + 5); ctx.lineTo(pad.left + 126, pad.top + 5); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#9e9389';
+  ctx.fillText('Total net worth (incl. RE)', pad.left + 130, pad.top + 9);
+
+  // X labels
+  ctx.fillStyle = '#9e9389';
+  ctx.font = `11px 'Nunito Sans', sans-serif`;
+  ctx.textAlign = 'center';
+  [46, 50, 55, 57, 63, 70, 75, 80, 90].forEach(age => {
+    const idx = rows.findIndex(r => r.age === age);
+    if (idx < 0) return;
+    ctx.fillText(age, xS(idx), h - 6);
+    ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(xS(idx), pad.top); ctx.lineTo(xS(idx), pad.top + ch); ctx.stroke();
+  });
+}
+
+function drawIncomeChart(rows) {
+  const { canvas, ctx, w, h, dpr } = getCanvasSize('chart2', 180);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { top: 16, right: 16, bottom: 32, left: 72 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const incomes = rows.map(r => (r.afterTaxIncome - ((r.oneTimeInflows || 0) + (r.practiceSale || 0) + (r.scenarioSaleProceeds || 0))) + r.savingsContrib);
+  const exps = rows.map(r => r.annualExp);
+  const withdrawals = rows.map(r => r.portfolioWithdrawalAfterTax || 0);
+  const maxV = Math.max(...incomes, ...exps, 1);
+
+  const xS = i => pad.left + (rows.length > 1 ? i / (rows.length - 1) : 0.5) * cw;
+  const yS = v => pad.top + (1 - v / maxV) * ch;
+
+  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) {
+    const y = pad.top + (i / 3) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+    ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans', sans-serif`; ctx.textAlign = 'right';
+    ctx.fillText(fmtD(maxV * (1 - i / 3)), pad.left - 6, y + 4);
+  }
+
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(incomes[i])) : ctx.lineTo(xS(i), yS(incomes[i])); });
+  ctx.strokeStyle = '#3a8a5e'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.stroke();
+
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(exps[i])) : ctx.lineTo(xS(i), yS(exps[i])); });
+  ctx.strokeStyle = '#b85050'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+  ctx.setLineDash([5, 3]); ctx.stroke(); ctx.setLineDash([]);
+
+  // Portfolio withdrawal line (only drawn from withdrawalStartAge)
+  const withdrawalStart = rows.findIndex(r => r.age >= state.withdrawalStartAge);
+  if (withdrawalStart >= 0) {
+    ctx.beginPath();
+    rows.forEach((r, i) => {
+      if (i < withdrawalStart) return;
+      i === withdrawalStart ? ctx.moveTo(xS(i), yS(withdrawals[i])) : ctx.lineTo(xS(i), yS(withdrawals[i]));
+    });
+    ctx.strokeStyle = '#c07a3a'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.setLineDash([4, 2]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#c07a3a'; ctx.font = `10px 'Nunito Sans', sans-serif`; ctx.textAlign = 'left';
+    ctx.fillText(`${(state.withdrawalRate*100).toFixed(1)}% withdrawal`, xS(withdrawalStart) + 4, yS(withdrawals[withdrawalStart]) - 5);
+  }
+
+  ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans', sans-serif`; ctx.textAlign = 'center';
+  [46, 55, 63, state.withdrawalStartAge, 75, 90].filter((v,i,a) => a.indexOf(v) === i).forEach(age => {
+    const idx = rows.findIndex(r => r.age === age);
+    if (idx < 0) return;
+    ctx.fillText(age, xS(idx), h - 6);
+  });
+}
+
+function drawCashFlowChart(rows) {
+  const { canvas, ctx, w, h, dpr } = getCanvasSize('chart3', 140);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { top: 16, right: 16, bottom: 32, left: 72 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const cfs = rows.map(r => r.afterTaxCF - ((r.oneTimeInflows || 0) + (r.practiceSale || 0) + (r.scenarioSaleProceeds || 0)));
+  const withdrawals = rows.map(r => r.portfolioWithdrawalAfterTax || 0);
+  const maxV = Math.max(...cfs, ...withdrawals, 0);
+  const minV = Math.min(...cfs, 0);
+  const range = (maxV - minV) || 1;
+
+  const xS = i => pad.left + (rows.length > 1 ? i / (rows.length - 1) : 0.5) * cw;
+  const yS = v => pad.top + (1 - (v - minV) / range) * ch;
+  const zeroY = yS(0);
+
+  // Grid lines
+  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) {
+    const y = pad.top + (i / 3) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+    ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans', sans-serif`; ctx.textAlign = 'right';
+    ctx.fillText(fmtD(minV + range * (1 - i / 3)), pad.left - 6, y + 4);
+  }
+
+  // Zero reference line
+  ctx.beginPath(); ctx.moveTo(pad.left, zeroY); ctx.lineTo(pad.left + cw, zeroY);
+  ctx.strokeStyle = '#c8c0b4'; ctx.lineWidth = 1; ctx.setLineDash([3, 2]); ctx.stroke(); ctx.setLineDash([]);
+
+  // Fill above/below zero
+  rows.forEach((_, i) => {
+    if (i === 0) return;
+    const x1 = xS(i - 1), x2 = xS(i);
+    const v1 = cfs[i - 1], v2 = cfs[i];
+    const y1 = yS(v1), y2 = yS(v2);
+    ctx.beginPath();
+    ctx.moveTo(x1, zeroY); ctx.lineTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x2, zeroY);
+    ctx.closePath();
+    const positive = (v1 + v2) / 2 >= 0;
+    ctx.fillStyle = positive ? 'rgba(58,138,94,0.12)' : 'rgba(184,80,80,0.12)';
+    ctx.fill();
+  });
+
+  // CF line
+  ctx.beginPath();
+  rows.forEach((r, i) => { i === 0 ? ctx.moveTo(xS(i), yS(cfs[i])) : ctx.lineTo(xS(i), yS(cfs[i])); });
+  ctx.strokeStyle = '#5b6fa8'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.stroke();
+
+  // Portfolio withdrawal line (from withdrawalStartAge)
+  const withdrawalStart = rows.findIndex(r => r.age >= state.withdrawalStartAge);
+  if (withdrawalStart >= 0) {
+    ctx.beginPath();
+    rows.forEach((r, i) => {
+      if (i < withdrawalStart) return;
+      i === withdrawalStart ? ctx.moveTo(xS(i), yS(withdrawals[i])) : ctx.lineTo(xS(i), yS(withdrawals[i]));
+    });
+    ctx.strokeStyle = '#c07a3a'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.setLineDash([4, 2]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#c07a3a'; ctx.font = `10px 'Nunito Sans', sans-serif`; ctx.textAlign = 'left';
+    ctx.fillText(`${(state.withdrawalRate*100).toFixed(1)}% withdrawal (after tax)`, xS(withdrawalStart) + 4, yS(withdrawals[withdrawalStart]) - 5);
+  }
+
+  // X labels
+  ctx.fillStyle = '#9e9389'; ctx.font = `11px 'Nunito Sans', sans-serif`; ctx.textAlign = 'center';
+  [46, 55, 63, state.withdrawalStartAge, 75, 90].filter((v,i,a) => a.indexOf(v) === i).forEach(age => {
+    const idx = rows.findIndex(r => r.age === age);
+    if (idx < 0) return;
+    ctx.fillText(age, xS(idx), h - 6);
+  });
+}
+
+function updateCashFlowCheck() {
+  const w2Mo = (state.netPerPeriod * 26) / 12;
+  const rentalMo = state.rentalCash / 12;
+  const otherMo = state.otherCash;
+  const totalInflow = w2Mo + rentalMo + otherMo;
+
+  const mortgageMo = state.mortgage;
+  const ccMo = state.cc;
+  const contribMo = state.plans529Mo;
+  const brokerageMo = (state.save1 - (state.save1 * 0.43)) / 12; // approx after-tax portion
+  const brokerageActual = 5000; // fixed at stated $5K/mo
+  const total401k = 46000 / 12; // both combined approx
+  const totalOutflow = mortgageMo + ccMo + contribMo + brokerageActual;
+
+  const net = totalInflow - totalOutflow;
+
+  document.getElementById('cfcheck-w2mo').textContent = fmtD(w2Mo) + '/mo';
+  document.getElementById('cfcheck-rentalmo').textContent = fmtD(rentalMo) + '/mo';
+  document.getElementById('cfcheck-inflow').textContent = fmtD(totalInflow) + '/mo';
+  document.getElementById('cfcheck-mortgage').textContent = fmtD(mortgageMo) + '/mo';
+  document.getElementById('cfcheck-cc').textContent = fmtD(ccMo) + '/mo';
+  document.getElementById('cfcheck-529').textContent = fmtD(contribMo) + '/mo';
+  document.getElementById('cfcheck-brokerage').textContent = '$5,000/mo';
+  document.getElementById('cfcheck-401k').textContent = '~' + fmtD(total401k) + '/mo (already deducted from take-home)';
+  document.getElementById('cfcheck-outflow').textContent = fmtD(totalOutflow) + '/mo';
+  document.getElementById('cfcheck-net').textContent = (net >= 0 ? '+' : '') + fmtD(net) + '/mo';
+
+  const resultEl = document.getElementById('cfcheck-result');
+  const noteEl = document.getElementById('cfcheck-note');
+  const badgeEl = document.getElementById('cfcheck-badge');
+
+  if (Math.abs(net) < 500) {
+    resultEl.style.background = '#e6f5ee';
+    document.getElementById('cfcheck-net').style.color = 'var(--green)';
+    noteEl.textContent = '✓ Cash flow balances — model aligns with your actual experience';
+    badgeEl.style.background = '#e6f5ee';
+    badgeEl.style.color = 'var(--green)';
+    badgeEl.textContent = '✓ Balanced';
+  } else if (net > 0) {
+    resultEl.style.background = '#e6f5ee';
+    document.getElementById('cfcheck-net').style.color = 'var(--green)';
+    noteEl.textContent = `Surplus of ${fmtD(net)}/mo — either extra savings, variable spending, or unaccounted income`;
+    badgeEl.style.background = '#e6f5ee';
+    badgeEl.style.color = 'var(--green)';
+    badgeEl.textContent = '↑ Surplus ' + fmtD(net);
+  } else {
+    resultEl.style.background = 'var(--red-bg)';
+    document.getElementById('cfcheck-net').style.color = 'var(--red)';
+    noteEl.textContent = `Shortfall of ${fmtD(Math.abs(net))}/mo — check rental cash, other income, or reduce savings/expense assumptions`;
+    badgeEl.style.background = 'var(--red-bg)';
+    badgeEl.style.color = 'var(--red)';
+    badgeEl.textContent = '↓ Gap ' + fmtD(Math.abs(net));
+  }
+}
+
+function toggleScenario() {
+  state.scenarioPracticePurchase = !state.scenarioPracticePurchase;
+  const btn = document.getElementById('btn-scenario-practice');
+  const badge = document.getElementById('scenario-badge');
+  const desc = document.getElementById('scenario-desc');
+  if (state.scenarioPracticePurchase) {
+    btn.style.background = '#e8f5ef';
+    btn.style.borderColor = 'var(--phase1)';
+    btn.style.color = 'var(--phase1)';
+    badge.style.background = '#4a7c6f';
+    badge.style.color = '#fff';
+    badge.textContent = 'ON';
+    desc.style.display = 'block';
+  } else {
+    btn.style.background = 'var(--white)';
+    btn.style.borderColor = 'var(--border2)';
+    btn.style.color = 'var(--text-mid)';
+    badge.style.background = '#ede9e3';
+    badge.style.color = 'var(--text-mid)';
+    badge.textContent = 'OFF';
+    desc.style.display = 'none';
+  }
+  safeUpdate();
+}
+
+initControls();
+safeUpdate();
+window.addEventListener('resize', () => safeUpdate());
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+</script>
+</body>
+</html>
