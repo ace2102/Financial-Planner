@@ -2630,9 +2630,7 @@ function clearRecon() {
 
 window.addEventListener('resize', () => safeUpdate());
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+// Service worker disabled
 
 initControls();
 initRecon();
