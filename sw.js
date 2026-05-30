@@ -1,10 +1,11 @@
-const CACHE = 'rp-v2';
+const CACHE = 'rp-v4';
+const BASE = '/Retirement-Planner';
 const FILES = [
-  '/Retirement-Planner/',
-  '/Retirement-Planner/index.html',
-  '/Retirement-Planner/manifest.json',
-  '/Retirement-Planner/icon-192.png',
-  '/Retirement-Planner/icon-512.png'
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
+  BASE + '/icon-192.png',
+  BASE + '/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
@@ -26,9 +27,28 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Only handle requests to our own origin
+  if (!e.request.url.includes('ace2102.github.io')) return;
+  
   e.respondWith(
     caches.match(e.request)
-      .then(r => r || fetch(e.request))
-      .catch(() => caches.match('/Retirement-Planner/index.html'))
+      .then(cached => {
+        if (cached) return cached;
+        return fetch(e.request)
+          .then(response => {
+            // Cache successful responses
+            if (response && response.status === 200) {
+              const clone = response.clone();
+              caches.open(CACHE).then(c => c.put(e.request, clone));
+            }
+            return response;
+          })
+          .catch(() => {
+            // Network failed — return index.html for navigation requests
+            if (e.request.mode === 'navigate') {
+              return caches.match(BASE + '/index.html');
+            }
+          });
+      })
   );
 });
